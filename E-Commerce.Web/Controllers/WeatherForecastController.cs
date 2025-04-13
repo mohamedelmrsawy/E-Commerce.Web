@@ -1,3 +1,4 @@
+using E_Commerce.Web.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace E_Commerce.Web.Controllers
@@ -6,28 +7,46 @@ namespace E_Commerce.Web.Controllers
     [Route("[controller]")]
     public class WeatherForecastController : ControllerBase
     {
-        private static readonly string[] Summaries = new[]
-        {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-        };
 
-        private readonly ILogger<WeatherForecastController> _logger;
+        [HttpGet("{id}")]
 
-        public WeatherForecastController(ILogger<WeatherForecastController> logger)
+        // Get : BaseUrl/Product/10
+        public ActionResult<Product> Get(int id)
         {
-            _logger = logger;
+            return new Product() { Id = id };
         }
 
-        [HttpGet(Name = "GetWeatherForecast")]
-        public IEnumerable<WeatherForecast> Get()
+
+
+        [HttpGet]
+        // Get : BaseUrl/Product
+        public ActionResult<Product> Get()
         {
-            return Enumerable.Range(1, 5).Select(index => new WeatherForecast
-            {
-                Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                TemperatureC = Random.Shared.Next(-20, 55),
-                Summary = Summaries[Random.Shared.Next(Summaries.Length)]
-            })
-            .ToArray();
+            return new Product() { Id = 100 };
+        }
+
+
+        [HttpPost]
+        // Get : BaseUrl/Product
+        public ActionResult<Product> AddProduct(Product product)
+        {
+            return new Product();
+        }
+
+
+        [HttpPut]
+        // Get : BaseUrl/Product
+        public ActionResult<Product> UpdateProduct(Product product)
+        {
+            return new Product();
+        }
+
+
+        [HttpDelete]
+        // Get : BaseUrl/Product
+        public ActionResult<Product> DeleteProduct(Product product)
+        {
+            return new Product();
         }
     }
 }
