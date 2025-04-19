@@ -11,11 +11,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Core\Services\Services.csproj" />
+    <Folder Include="Data\DataSeed\" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Data\DataSeed\" />
+    <ProjectReference Include="..\..\Core\Services\Services.csproj" />
   </ItemGroup>
 
 </Project>
