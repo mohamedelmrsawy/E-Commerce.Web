@@ -14,8 +14,9 @@ namespace Services.MappingProfile
         public ProductProfile()
         {
             CreateMap<Product, ProductDto>()
-                .ForMember(dest => dest.BrandName , option =>option.MapFrom(src=>src.productBrand.Name))
-                .ForMember(dest => dest.TypeName , option =>option.MapFrom(src=>src.productType.Name));
+                .ForMember(dest => dest.BrandName, option => option.MapFrom(src => src.productBrand.Name))
+                .ForMember(dest => dest.TypeName, option => option.MapFrom(src => src.productType.Name))
+                .ForMember(dest => dest.PictureUrl, option => option.MapFrom<PictureUrlResolver>());
 
             CreateMap<ProductType, TypeDto>();
             CreateMap<ProductBrand, PrandDto>();
