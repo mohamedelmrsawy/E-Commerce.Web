@@ -1,4 +1,6 @@
-﻿using ServiceAbstraction;
+﻿using Microsoft.AspNetCore.Mvc;
+using ServiceAbstraction;
+using Shared.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +9,37 @@ using System.Threading.Tasks;
 
 namespace Presentation.Controllers
 {
-    public class ProductsController(IServiceManager _serviceManager)
+    [ApiController]
+    [Route("api/[Controller]")]
+    public class ProductsController(IServiceManager _serviceManager) : ControllerBase
     {
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<ProductDto>>> GetAllProducts()
+        {
+            var products = await _serviceManager.productService.GetAllPrandsAsync();
+            return Ok(products);
+        } 
+
+        [HttpGet("{id:int}")]
+        public async Task<ActionResult<ProductDto>> GetProduct(int id)
+        {
+            var products = await _serviceManager.productService.GetProductByIdAsync(id);
+            return Ok(products);
+        }
+
+        [HttpGet("types")]
+        public async Task<ActionResult<IEnumerable<TypeDto>>> GetType()
+        {
+            var type = await _serviceManager.productService.GetAllTypesAsync();
+            return Ok(type);
+        }
+
+        [HttpGet("brandes")]
+        public async Task<ActionResult<IEnumerable<TypeDto>>> GetBrandes()
+        {
+            var brande = await _serviceManager.productService.GetAllPrandsAsync();
+            return Ok(brande);
+        }
+
     }
 }
