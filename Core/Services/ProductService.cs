@@ -2,6 +2,7 @@
 using DomianLayer.Contracts;
 using DomianLayer.Models;
 using ServiceAbstraction;
+using Services.Specifications;
 using Shared.DTO;
 using System;
 using System.Collections.Generic;
@@ -23,7 +24,8 @@ namespace Services
 
         public async Task<IEnumerable<ProductDto>> GetAllProductsAsync()
         {
-            var Products = await _unitOfWork.GetRepository<Product , int>().GetAllAsync();
+            var Specifications = new ProductWithBrandAndTypeSpecifications();
+            var Products = await _unitOfWork.GetRepository<Product , int>().GetAllAsync(Specifications);
             return _mapper.Map<IEnumerable<Product>, IEnumerable<ProductDto>>(Products);
         }
 
@@ -35,7 +37,8 @@ namespace Services
 
         public async Task<ProductDto?> GetProductByIdAsync(int id)
         {
-            var product = await _unitOfWork.GetRepository<Product, int>().GetbyIdAsync(id);
+            var Specifications = new ProductWithBrandAndTypeSpecifications(id);
+            var product = await _unitOfWork.GetRepository<Product, int>().GetbyIdAsync(Specifications);
             return _mapper.Map<Product , ProductDto>(product);
         }
     }

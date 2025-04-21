@@ -9,14 +9,14 @@ using System.Threading.Tasks;
 
 namespace Services.Specifications
 {
-    public class BaseSpecifications<T, TKey> : ISpecifications<T, TKey> where T : BaseEntity<TKey>
+    abstract class BaseSpecifications<T, TKey> : ISpecifications<T, TKey> where T : BaseEntity<TKey>
     {
-        protected BaseSpecifications(Expression<Func<T, bool>> CriteriaExpression)
+        protected BaseSpecifications(Expression<Func<T, bool>>? CriteriaExpression)
         {
             Criteria = CriteriaExpression;
         }
 
-        public Expression<Func<T, bool>> Criteria {  get; private set; }
+        public Expression<Func<T, bool>>? Criteria {  get; private set; }
 
         public List<Expression<Func<T, object>>> IncludeExpressions { get; } = [];
 
