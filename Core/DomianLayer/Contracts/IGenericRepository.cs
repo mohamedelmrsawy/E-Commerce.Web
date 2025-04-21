@@ -14,5 +14,10 @@ namespace DomianLayer.Contracts
         Task AddAsync(T entity);
         void Update(T entity);
         void Remove(T entity);
+
+        #region Specifications
+        Task<IEnumerable<T>> GetAllAsync(ISpecifications<T, TKey> specifications);
+        Task<T?> GetbyIdAsync(ISpecifications<T, TKey> specifications); 
+        #endregion
     }
 }
