@@ -14,11 +14,16 @@ namespace Presentation.Controllers
     public class ProductsController(IServiceManager _serviceManager) : ControllerBase
     {
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ProductDto>>> GetAllProducts()
+        public async Task<ActionResult<IEnumerable<ProductDto>>> GetAllProducts(int? BrandId , int? TypeId)
         {
-            var products = await _serviceManager.productService.GetAllPrandsAsync();
+            var products = await _serviceManager.productService.GetAllProductsAsync(BrandId , TypeId);
             return Ok(products);
         } 
+
+
+
+
+
 
         [HttpGet("{id:int}")]
         public async Task<ActionResult<ProductDto>> GetProduct(int id)
