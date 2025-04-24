@@ -10,6 +10,7 @@ namespace Shared
     {
         public int? BrandId { get; set; }
         public int? TypeId { get; set; }
-        public ProductSortingOption option { get; set; }
+        public ProductSortingOption Option { get; set; }
+        public string? SearchValue { get; set; }
     }
 }
