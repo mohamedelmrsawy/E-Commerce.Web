@@ -33,7 +33,7 @@ namespace Services.Specifications
                 default:
                     break;
             }
-
+            ApplyPagination(option.PageSize,option.PageIndex);
         }
 
         public ProductWithBrandAndTypeSpecifications(int id):base(p=>p.Id == id) 

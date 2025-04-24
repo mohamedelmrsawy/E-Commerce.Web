@@ -27,11 +27,24 @@ namespace Services.Specifications
         public Expression<Func<T, object>> OrderBy { get; private set; }
 
         public Expression<Func<T, object>> OrderByDescending { get; private set; }
-
+        
         protected void AddOrderBy(Expression<Func<T, object>> orderByExpression) => OrderBy = orderByExpression;
 
         protected void AddOrderByDescending(Expression<Func<T, object>> orderByDescending) => OrderByDescending = orderByDescending;
 
+        #endregion
+
+
+        #region Pagination
+        public int Take { get;private set; }
+        public int Skip { get; private set; }
+        public bool IsPaginated { get; set; }
+        protected void ApplyPagination(int PageSize , int PageIndex)
+        {
+            IsPaginated = true;
+            Take = PageSize;
+            Skip = (PageIndex - 1) * PageSize;
+        } 
         #endregion
 
 
