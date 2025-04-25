@@ -10,7 +10,8 @@ namespace Services.Specifications
 {
     internal class ProductWithBrandAndTypeSpecifications : BaseSpecifications<Product , int>
     {
-        public ProductWithBrandAndTypeSpecifications(ProductQueryParams option) : base(p => (!option.BrandId.HasValue || option.BrandId == option.BrandId) && (!option.TypeId.HasValue || option.TypeId == option.TypeId)
+        public ProductWithBrandAndTypeSpecifications(ProductQueryParams option) : base(p => (!option.BrandId.HasValue || option.BrandId == option.BrandId) 
+        && (!option.TypeId.HasValue || option.TypeId == option.TypeId)
         && (string.IsNullOrWhiteSpace(option.SearchValue) || p.Name.ToLower().Contains(option.SearchValue.ToLower())))
         {
             AddInclude(P => P.productBrand);
