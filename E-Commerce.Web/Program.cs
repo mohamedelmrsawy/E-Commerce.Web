@@ -38,8 +38,20 @@ namespace E_Commerce.Web
             var Scoope = app.Services.CreateScope();
             var ObjectOfDataSeeding = Scoope.ServiceProvider.GetRequiredService<IDataSeeding>();
             await ObjectOfDataSeeding.DataSeedAsync();
-            
+
             #region Configure the HTTP request pipeline.
+
+            //app.Use(async (RequestContext, NextMiddleWare) =>
+            //{
+            //    Console.WriteLine("Request Under Processing");
+            //    await NextMiddleWare.Invoke();
+            //    Console.WriteLine("Waiting Response");
+            //    Console.WriteLine(RequestContext.Response.Body);
+
+            //});
+
+
+
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
