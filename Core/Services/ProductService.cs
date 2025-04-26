@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using DomianLayer.Contracts;
+using DomianLayer.Exceptions;
 using DomianLayer.Models;
 using ServiceAbstraction;
 using Services.Specifications;
@@ -27,7 +28,7 @@ namespace Services
         {
             var Repo = _unitOfWork.GetRepository<Product,int>();
             var Specifications = new ProductWithBrandAndTypeSpecifications( option);
-            var Products = await _unitOfWork.GetRepository<Product , int>().GetAllAsync(Specifications);
+            var Products = await _unitOfWork.GetRepository<Product , int>().GetAllAsync(Specifications);            
             var AllProducts = _mapper.Map<IEnumerable<Product>, IEnumerable<ProductDto>>(Products);
             var ProductCount = Products.Count();
             var TotalCount = await Repo.CountAsync(new ProductCountSpecifications(option));
@@ -44,6 +45,10 @@ namespace Services
         {
             var Specifications = new ProductWithBrandAndTypeSpecifications(id);
             var product = await _unitOfWork.GetRepository<Product, int>().GetbyIdAsync(Specifications);
+            if (product is null)
+            {
+                throw new ProductNotFoundException(id);
+            }
             return _mapper.Map<Product , ProductDto>(product);
         }
     }
