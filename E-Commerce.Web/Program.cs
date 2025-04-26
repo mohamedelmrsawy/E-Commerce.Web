@@ -1,5 +1,7 @@
 
 using DomianLayer.Contracts;
+using E_Commerce.Web.Factories;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 using Persistence.Data;
@@ -31,6 +33,10 @@ namespace E_Commerce.Web
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
             builder.Services.AddScoped<IServiceManager, ServiceManager>();
             builder.Services.AddAutoMapper(typeof(Services.AssembleReference).Assembly);
+            builder.Services.Configure<ApiBehaviorOptions>((option) =>
+            {
+                option.InvalidModelStateResponseFactory = ApiResponseFactory.GenerateApiValidationErrorRespnse;
+            });
             #endregion
 
             var app = builder.Build();
