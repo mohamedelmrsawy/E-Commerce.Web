@@ -19,6 +19,16 @@ namespace E_Commerce.Web.CustomMiddleWare
             try
             {
                 await _next.Invoke(httpContext);
+
+                if(httpContext.Response.StatusCode == StatusCodes.Status404NotFound)
+                {
+                    var response = new ErrorToReturn()
+                    {
+                        StatusCode = StatusCodes.Status404NotFound,
+                        ErrorMessage = $"End Point {httpContext.Request.Path} is not found"
+                    };
+                }
+
             }catch (Exception ex)
             {
                 _logger.LogError(ex, "!!!!!!!!!!!");
