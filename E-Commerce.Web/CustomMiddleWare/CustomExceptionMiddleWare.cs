@@ -1,4 +1,5 @@
-﻿using Shared.ErrorModels;
+﻿using DomianLayer.Exceptions;
+using Shared.ErrorModels;
 
 namespace E_Commerce.Web.CustomMiddleWare
 {
@@ -22,13 +23,19 @@ namespace E_Commerce.Web.CustomMiddleWare
             {
                 _logger.LogError(ex, "!!!!!!!!!!!");
 
-                httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
+                // httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
+                httpContext.Response.StatusCode = ex switch
+                {
+                    NotFoundException => StatusCodes.Status404NotFound,
+                    _ => StatusCodes.Status500InternalServerError
+                };
 
                 //httpContext.Response.ContentType = "application/json";
 
                 var Response = new ErrorToReturn()
                 {
-                    StatusCode = StatusCodes.Status500InternalServerError,
+                    //StatusCode = StatusCodes.Status500InternalServerError,
+                    StatusCode = httpContext.Response.StatusCode,
                     ErrorMessage = ex.Message
                 };
 
