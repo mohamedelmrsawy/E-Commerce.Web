@@ -1,5 +1,6 @@
 
 using DomianLayer.Contracts;
+using E_Commerce.Web.Extensions;
 using E_Commerce.Web.Factories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -23,27 +24,15 @@ namespace E_Commerce.Web
 
             #region Add services to the container.
             builder.Services.AddControllers();
-            builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
-            builder.Services.AddDbContext<StorDbContext>(Option =>
-            {
-                Option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-            });
-            builder.Services.AddScoped<IDataSeeding, DataSeeding>();
-            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-            builder.Services.AddScoped<IServiceManager, ServiceManager>();
-            builder.Services.AddAutoMapper(typeof(Services.AssembleReference).Assembly);
-            builder.Services.Configure<ApiBehaviorOptions>((option) =>
-            {
-                option.InvalidModelStateResponseFactory = ApiResponseFactory.GenerateApiValidationErrorRespnse;
-            });
+            builder.Services.AddSwaggerServices();
+            builder.Services.AddInfrastructureServices(builder.Configuration);
+            builder.Services.AddlicationServic();
+            builder.Services.AddWebAppLicationServices();         
             #endregion
 
             var app = builder.Build();
 
-            var Scoope = app.Services.CreateScope();
-            var ObjectOfDataSeeding = Scoope.ServiceProvider.GetRequiredService<IDataSeeding>();
-            await ObjectOfDataSeeding.DataSeedAsync();
+            await app.SeedDataBaseAsync();
 
             #region Configure the HTTP request pipeline.
 
