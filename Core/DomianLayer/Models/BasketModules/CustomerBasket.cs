@@ -8,7 +8,7 @@ namespace DomianLayer.Models.BasketModules
 {
     public class CustomerBasket
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
         public ICollection<BasketItem> Items { get; set; } = [];
     }
 }
