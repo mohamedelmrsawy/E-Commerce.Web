@@ -1,4 +1,6 @@
 ﻿using DomianLayer.Contracts;
+using DomianLayer.Models.IdentityModule;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -35,6 +37,8 @@ namespace Persistence
             {
                 Option.UseSqlServer(Configuration.GetConnectionString("IdentityConnection"));
             });
+            Services.AddIdentityCore<ApplicationUser>().AddRoles<IdentityRole>()
+                .AddEntityFrameworkStores<StoreIdentityDbContext>();
             return Services;
         }
 

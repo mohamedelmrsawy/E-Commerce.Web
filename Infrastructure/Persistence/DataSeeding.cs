@@ -1,5 +1,7 @@
 ﻿using DomianLayer.Contracts;
 using DomianLayer.Models;
+using DomianLayer.Models.IdentityModule;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Data;
 using System;
@@ -11,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Persistence
 {
-    public class DataSeeding(StorDbContext _dbContext) : IDataSeeding
+    public class DataSeeding(StorDbContext _dbContext , UserManager<ApplicationUser> _userManager , RoleManager<IdentityRole> _roleManager) : IDataSeeding
     {
         public async Task DataSeedAsync()
         {
@@ -71,6 +73,30 @@ namespace Persistence
 
             }
             
+        }
+
+        public async Task IdentityDataSeedAsync()
+        {
+            if (!_roleManager.Roles.Any())
+            {
+               await _roleManager.CreateAsync(new IdentityRole("Admin"));
+               await _roleManager.CreateAsync(new IdentityRole("SuperAdmin"));
+            }
+
+            if (!_userManager.Users.Any())
+            {
+                var user01 = new ApplicationUser()
+                {
+                    Email = "mohamed@gmail.com",
+                    DisplayName = "mohamed ali",
+                    PhoneNumber = "1234567890",
+                    UserName = "mohamedAli"
+                };
+
+                await _userManager.CreateAsync(user01, "p@ssw0rd");
+                await _userManager.AddToRoleAsync(user01, "Admin");
+            }
+
         }
     }
 }
