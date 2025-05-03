@@ -1,16 +1,7 @@
-
-using DomianLayer.Contracts;
 using E_Commerce.Web.Extensions;
-using E_Commerce.Web.Factories;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Persistence;
-using Persistence.Data;
-using Persistence.Repository;
-using ServiceAbstraction;
 using Services;
-using Services.MappingProfile;
-using System.Threading.Tasks;
+
 
 namespace E_Commerce.Web
 {
