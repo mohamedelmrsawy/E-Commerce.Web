@@ -1,6 +1,8 @@
-﻿using DomianLayer.Exceptions;
+﻿using AutoMapper;
+using DomianLayer.Exceptions;
 using DomianLayer.Models.IdentityModule;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using ServiceAbstraction;
 using Shared.DTO.IdentityDto;
@@ -15,13 +17,53 @@ using System.Threading.Tasks;
 
 namespace Services
 {
-    public class AuthenticationService(UserManager<ApplicationUser> _userManager) : IAuthenticationService
+    public class AuthenticationService(UserManager<ApplicationUser> _userManager , IMapper _mapper) : IAuthenticationService
     {
+        public async Task<bool> CheckEmailAsync(string email)
+        {
+            var user =await _userManager.FindByEmailAsync(email);
+            return user is not null;
+        }
+        public async Task<UserDto> GetCurrentUserAsync(string Email)
+        {
+            var user =await _userManager.FindByEmailAsync(Email) ?? throw new UserNotFoundException(Email);
+            return new UserDto() { DisplayName = user.DisplayName, Email = user.Email, Token = await CreateTokenAsync(user) };
+        }
+        public async Task<AddressDto> GetCurrentUserAddressAsync(string Email)
+        {
+            var user =await _userManager.Users.Include(u => u.Address).FirstOrDefaultAsync(u => u.Email == Email) ?? throw new UserNotFoundException(Email);
+            if(user.Address is not null) 
+                return _mapper.Map<Address,AddressDto>(user.Address);
+            else
+                throw new AddressNotFoundException(Email);
+        }
+        public async Task<AddressDto> UpdateCurrentUserAddressAsync(AddressDto _addressDto, string Email)
+        {
+            var user = await _userManager.Users.Include(u => u.Address).FirstOrDefaultAsync(u => u.Email == Email) ?? throw new UserNotFoundException(Email);
+            if(user.Address is not null)
+            {
+                user.Address.FarstName = _addressDto.FirstName;
+                user.Address.LastName = _addressDto.LastName;
+                user.Address.City = _addressDto.City;
+                user.Address.Country = _addressDto.Country;
+                user.Address.Street = _addressDto.Street;
+            }
+            else
+            {
+                user.Address = _mapper.Map<AddressDto,Address>(_addressDto);
+            }
+
+            await _userManager.UpdateAsync(user);
+            return _mapper.Map<AddressDto>(user.Address);
+        }
+
+
+        #region 01
         public async Task<UserDto> LoginAsync(LoginDto loginDto)
         {
-            var user =await _userManager.FindByEmailAsync(loginDto.Email) ?? throw new UserNotFoundException(loginDto.Email);
+            var user = await _userManager.FindByEmailAsync(loginDto.Email) ?? throw new UserNotFoundException(loginDto.Email);
             var IsPassword = await _userManager.CheckPasswordAsync(user, loginDto.Password);
-            if(IsPassword)
+            if (IsPassword)
             {
                 return new UserDto
                 {
@@ -46,9 +88,9 @@ namespace Services
                 PhoneNumber = registerDto.PhoneNumber,
                 UserName = registerDto.UserName
             };
-            var  result =await _userManager.CreateAsync(user,registerDto.Password);
-            if(result.Succeeded)
-                return new UserDto() { DisplayName = user.DisplayName, Email = user.Email , Token = "TOKEN-TODO" };
+            var result = await _userManager.CreateAsync(user, registerDto.Password);
+            if (result.Succeeded)
+                return new UserDto() { DisplayName = user.DisplayName, Email = user.Email, Token = "TOKEN-TODO" };
             else
             {
                 var error = result.Errors.Select(e => e.Description).ToList();
@@ -65,12 +107,12 @@ namespace Services
                 new(ClaimTypes.Name, user.UserName!),
                 new(ClaimTypes.NameIdentifier, user.Id!)
             };
-            var roles =await _userManager.GetRolesAsync(user);
-            foreach (var role in roles) 
+            var roles = await _userManager.GetRolesAsync(user);
+            foreach (var role in roles)
                 Claims.Add(new Claim(ClaimTypes.Role, role));
             var secretKey = "MySecretKey";
             var Key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
-            var creds = new SigningCredentials(Key,SecurityAlgorithms.HmacSha256);
+            var creds = new SigningCredentials(Key, SecurityAlgorithms.HmacSha256);
 
             var token = new JwtSecurityToken(
                 issuer: "MyIssuer",
@@ -79,7 +121,8 @@ namespace Services
                 expires: DateTime.Now.AddDays(1),
                 signingCredentials: creds);
 
-            return new JwtSecurityTokenHandler().WriteToken(token);    
-        }
+            return new JwtSecurityTokenHandler().WriteToken(token);
+        } 
+        #endregion
     }
 }
