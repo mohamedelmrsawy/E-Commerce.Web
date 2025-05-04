@@ -1,12 +1,15 @@
 ﻿using DomianLayer.Exceptions;
 using DomianLayer.Models.IdentityModule;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
 using ServiceAbstraction;
 using Shared.DTO.IdentityDto;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -51,6 +54,32 @@ namespace Services
                 var error = result.Errors.Select(e => e.Description).ToList();
                 throw new BadRequestException(error);
             }
+        }
+
+
+        private async Task<string> CreateTokenAsync(ApplicationUser user)
+        {
+            var Claims = new List<Claim>()
+            {
+                new(ClaimTypes.Email, user.Email!),
+                new(ClaimTypes.Name, user.UserName!),
+                new(ClaimTypes.NameIdentifier, user.Id!)
+            };
+            var roles =await _userManager.GetRolesAsync(user);
+            foreach (var role in roles) 
+                Claims.Add(new Claim(ClaimTypes.Role, role));
+            var secretKey = "MySecretKey";
+            var Key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
+            var creds = new SigningCredentials(Key,SecurityAlgorithms.HmacSha256);
+
+            var token = new JwtSecurityToken(
+                issuer: "MyIssuer",
+                audience: "MyAudience",
+                claims: Claims,
+                expires: DateTime.Now.AddDays(1),
+                signingCredentials: creds);
+
+            return new JwtSecurityTokenHandler().WriteToken(token);    
         }
     }
 }
